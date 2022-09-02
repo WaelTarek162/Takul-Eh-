@@ -330,7 +330,7 @@ List<Meal> DUMMY_MEALS = [
     affordability: Affordability.Affordable,
     complexity: Complexity.Hard,
     imageUrl:
-        'https://cdn.pixabay.com/photo/2014/08/07/21/07/souffle-412785_1280.jpg',
+        'https://static01.nyt.com/images/2017/01/13/dining/13SOUFLE-3/13SOUFLE-3-articleLarge.jpg',
     duration: 45,
     ingredients: [
       '1 Teaspoon melted Butter',

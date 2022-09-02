@@ -1,58 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:meal/Screens/tabs_screen.dart';
 import 'package:meal/Widget/main_drawer.dart';
+import 'package:meal/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 import '../provider/meal_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Filter_screen extends StatefulWidget {
   static const route_name = '/filter_screen';
-
-
-
-
 
   @override
   State<Filter_screen> createState() => _Filter_screenState();
 }
 
 class _Filter_screenState extends State<Filter_screen> {
-  bool _isGlutenFree = false;
-  bool _isVegan = false;
-  bool _isVegetarian = false;
-  bool _isLactoseFree = false;
 
-  @override
-  void initState() {
-    final Map<String,bool>current_filter = Provider.of<Meal_provider>(context,listen: false).filters;
+  void nothing(){}
 
-    _isGlutenFree = current_filter['gluten']!;
-    _isVegan = current_filter['vegan']!;
-    _isVegetarian = current_filter['vegetarian']!;
-    _isLactoseFree = current_filter['lactose']!;
-    super.initState();
+  Widget build_switch_tile(String titlle,String sub_tit,VoidCallback func(bool) ,bool switch_val,BuildContext ctx){
+    return  SwitchListTile(
+        title: Text(titlle),
+        inactiveTrackColor: Provider.of<ThemeProvider>(ctx,listen: true).theme_mode==ThemeMode.light?null:Colors.black,
+        subtitle: Text(sub_tit),
+        value: switch_val,
+        onChanged: func
+    );
+
   }
 
 
   @override
   Widget build(BuildContext context) {
 
-
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    final Map<String,bool>current_filter = Provider.of<Meal_provider>(context,listen: false).filters;
+      return Scaffold(
         appBar: AppBar(
           title: Text('Your Filters'),
-          actions: [
-            IconButton(onPressed:() {
-             final _filters={
-                'gluten':_isGlutenFree,
-                'lactose':_isLactoseFree,
-                'vegan':_isVegan,
-                'vegetarian':_isVegetarian
-              };
-             Provider.of<Meal_provider>(context,listen: false).set_filters(_filters);
-              }, icon: Icon(Icons.save))
-          ],
+
         ),
         body: Column(
           children: [
@@ -63,58 +47,60 @@ class _Filter_screenState extends State<Filter_screen> {
                 style: Theme
                     .of(context)
                     .textTheme
-                    .titleMedium,
+                    .headline6,
               ),
             ),
             Expanded(
                 child: ListView(
                   children: [
-                    SwitchListTile(
-                        title: Text('Gluten-Free'),
-                        subtitle: Text('Only include gluten-free meals.'),
-                        value: _isGlutenFree,
+                    build_switch_tile('Gluten-Free', 'Only include gluten-free meals.',(x) {
+                      setState(() {
+                    current_filter['gluten'] = x;
+                      });
+                      Provider.of<Meal_provider>(context,listen: false).set_filters();
+                     // return current_filter['gluten'] = x;
+                      return nothing;
+                    } ,
+                        current_filter['gluten']!, context),
 
-                        onChanged: (x) {
+                    build_switch_tile('Lactos-Free', 'Only include lactos-free meals.',
+                            (x) {
                           setState(() {
-                            _isGlutenFree = x;
+                            current_filter['lactose'] = x;
                           });
-                        }),
-                    SwitchListTile(
-                        title: Text('Lactos-Free'),
-                        subtitle: Text('Only include lactos-free meals.'),
-                        value: _isLactoseFree,
+                          Provider.of<Meal_provider>(context,listen: false).set_filters();
+                         // return current_filter['lactose'] = x;
+                          return nothing;
 
-                        onChanged: (x) {
-                          setState(() {
-                            _isLactoseFree = x;
-                          });
-                        }),
-                    SwitchListTile(
-                        title: Text('Vegan'),
-                        subtitle: Text('Only include Vegan meals.'),
-                        value: _isVegan,
+                        }
 
-                        onChanged: (x) {
-                          setState(() {
-                            _isVegan = x;
-                          });
-                        }),
-                    SwitchListTile(
-                        title: Text('Vegetarian'),
-                        subtitle: Text('Only include Vegetarian meals.'),
-                        value: _isVegetarian,
+                        ,current_filter['lactose']!, context),
 
-                        onChanged: (x) {
-                          setState(() {
-                            _isVegetarian = x;
-                          });
-                        }),
+
+                    build_switch_tile('Vegan', 'Only include Vegan meals.',(x) {
+                      setState(() {
+                        current_filter['vegan'] = x;
+                      });
+                      Provider.of<Meal_provider>(context,listen: false).set_filters();
+                    //  return current_filter['vegan'] = x;
+                      return nothing;
+
+                    } ,current_filter['vegan']!, context),
+                    build_switch_tile('Vegetarian', 'Only include Vegetarian meals.',(x){
+                      setState(() {
+                        current_filter['vegetarian'] = x;
+                      });
+                      Provider.of<Meal_provider>(context,listen: false).set_filters();
+                     // return current_filter['vegetarian'] = x;
+                      return nothing;
+                    } ,current_filter['vegetarian']!, context),
                   ],
                 ))
           ],
         ),
         drawer: Main_Drawer(),
-      ),
+    //  ),
+
     );
   }
 }
